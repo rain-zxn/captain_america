@@ -30,7 +30,7 @@ func main() {
 		panic(err)
 	}
 
-	bot.Handle("/start", func(c telebot.Context) error {
+	startHandler := func(c telebot.Context) error {
 		groupBtn := telebot.InlineButton{
 			Unique: "group",
 			Text:   config.TextGroup,
@@ -55,6 +55,12 @@ func main() {
 		return c.Send(config.TextWebApp+"\n"+config.CaptainWebApp, &telebot.ReplyMarkup{
 			InlineKeyboard: inlineKeys,
 		})
+	}
+
+	bot.Handle("/start", startHandler)
+
+	bot.Handle(telebot.OnText, func(c telebot.Context) error {
+		return startHandler(c)
 	})
 
 	bot.Handle(&telebot.InlineButton{Unique: "about"}, func(c telebot.Context) error {
